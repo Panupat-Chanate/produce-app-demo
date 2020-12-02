@@ -389,4 +389,158 @@ router.get('/getUser', async (req, res) => {
     } else {}
 })
 
+router.post('/addCustomer', async (req, res) => {
+   
+    const objData = JSON.parse(JSON.stringify(req.body));
+    console.log(objData);
+    if (req.body) {
+        res.redirect('/')
+        sql = "INSERT INTO tb_customer (customer_id, customer_name, customer_email,customer_address,customer_data) VALUES('"+ objData.CustomerId +"', '"+ objData.CustomerName +"','"+ objData.CustomerEmail +"','"+ objData.CustomerAddress +"', '"+ objData.CustomerData +"')"
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            // res.json(result);
+        })
+    }
+})
+
+router.get('/showCustomer', async (req, res) => {
+    sql = "SELECT * FROM tb_customer"
+    con.query(sql, function (err, result) {
+        if (err) return console.log(err);
+        var strResult = JSON.parse(JSON.stringify(result))
+        // var strResult = JSON.stringify(result)
+        console.log(result)
+        console.log(strResult)
+        res.json(strResult);
+    })
+})
+
+router.post('/searchcustomer', async (req, res) => {
+    console.log(req.body)
+    let sql = "SELECT * FROM tb_customer "
+    if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("1")
+       sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("2")
+        sql+="WHERE customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("3")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%'  AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail == null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("4")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("5")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData == null) {
+        console.log("6")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("7")
+        sql+="WHERE customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail == null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("8")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%'  AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData == null) {
+        console.log("9")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName != null && req.body.searchcusEmail == null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("10")
+        sql+="WHERE  customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("11")
+        sql+="WHERE customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName != null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData == null) {
+        console.log("12")
+        sql+="WHERE customer_name LIKE '%"+ req.body.searchcusName +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail == null && req.body.searchcusAddress != null && req.body.searchcusData != null) {
+        console.log("13")
+        sql+="WHERE customer_address LIKE '%"+ req.body.searchcusAddress +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("14")
+        sql+="WHERE customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress != null && req.body.searchcusData == null) {
+        console.log("15")
+        sql+="WHERE customer_email LIKE '%"+ req.body.searchcusEmail +"%' AND customer_address LIKE '%"+ req.body.searchcusAddress +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName == null && req.body.searchcusEmail == null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("16")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData == null) {
+        console.log("17")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%' AND customer_email LIKE '%"+ req.body.searchcusEmail +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName != null && req.body.searchcusEmail == null && req.body.searchcusAddress == null && req.body.searchcusData == null) {
+        console.log("18")
+        sql+="WHERE customer_name LIKE '%"+ req.body.searchcusName +"%'"
+    }
+    else if (req.body.searchcusId != null && req.body.searchcusName == null && req.body.searchcusEmail == null && req.body.searchcusAddress == null && req.body.searchcusData == null) {
+        console.log("19")
+        sql+="WHERE customer_id LIKE '%"+ req.body.searchcusId +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail != null && req.body.searchcusAddress == null && req.body.searchcusData == null) {
+        console.log("20")
+        sql+="WHERE customer_email LIKE '%"+ req.body.searchcusEmail +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail == null && req.body.searchcusAddress != null && req.body.searchcusData == null) {
+        console.log("21")
+        sql+="WHERE customer_address LIKE '%"+ req.body.searchcusAddress +"%'"
+    }
+    else if (req.body.searchcusId == null && req.body.searchcusName == null && req.body.searchcusEmail == null && req.body.searchcusAddress == null && req.body.searchcusData != null) {
+        console.log("22")
+        sql+="WHERE customer_data LIKE '%"+ req.body.searchcusData +"%'"
+    }
+    con.query(sql, function (err, result) {
+        console.log(result)
+        if (err) return console.log(err);
+        var strResult = JSON.parse(JSON.stringify(result))
+        if (strResult != "[]") {
+            console.log(strResult)
+            res.json(strResult);
+        } else {
+            console.log(strResult)
+            var queryData ={
+                dataStatus: false
+            };
+            res.json(queryData);
+        }
+    })
+})
+
+router.post('/deletecustomer', async (req, res) => {
+    console.log(req.body.delId)
+    sql = "DELETE FROM tb_customer WHERE id = '"+ req.body.delId +"'"
+    con.query(sql, function (err, result) {
+        if (err) return console.log(err);
+        res.json(result);
+    })
+})
+
+router.post('/editcustomer', async (req, res) => {
+    console.log(req.body)
+    sql = "UPDATE tb_customer SET customer_id = '"+ req.body.editId +"', customer_name = '"+ req.body.editName +"', customer_email = '"+ req.body.editEmail +"', customer_address = '"+ req.body.editAddress +"', customer_data = '"+ req.body.editData +"' WHERE id = '"+ req.body.edit_id +"'"
+    con.query(sql, function (err, result) {
+        if (err) return console.log(err);
+        res.json(result);
+    })
+})
+
+
+
 module.exports = router;

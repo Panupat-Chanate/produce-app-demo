@@ -2,8 +2,9 @@ import React,{Component, useState} from 'react';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
 import Session from './session'
+import {Card, InputGroup, Button, FormControl} from 'react-bootstrap';
 
-export default class Homepopup extends Component{
+export default class Produce extends Component{
   constructor() {
     super();
     this.state={
@@ -14,6 +15,8 @@ export default class Homepopup extends Component{
       searchData: '',
       _img: [],
       _file: [],
+      currentPage: 1,
+      dataPage: 10,
 
       popupName: '',
       popupId: '',
@@ -155,19 +158,73 @@ export default class Homepopup extends Component{
     });
   }
 
+  Firstpage = () => {
+    if(this.state.currentPage > 1) {
+        this.setState({
+            currentPage: 1
+        });
+    }
+  };
+
+  Prevpage = () => {
+      if(this.state.currentPage > 1) {
+          this.setState({
+              currentPage: this.state.currentPage - 1
+          });
+      }
+  };
+
+
+  Lastpage = () => {
+      if(this.state.currentPage < Math.ceil(this.state.arrayData.length / this.state.dataPage)) {
+          this.setState({
+              currentPage: Math.ceil(this.state.arrayData.length / this.state.dataPage)
+          });
+      }
+  };
+
+
+  Nextpage = () => {
+    if(this.state.currentPage < Math.ceil(this.state.arrayData.length / this.state.dataPage)) {
+        this.setState({
+            currentPage: this.state.currentPage + 1
+        });
+    }
+  };
+
+
   render(){
+    const {arrayData, currentPage, dataPage} = this.state;
+    const lastindex = currentPage * dataPage;
+    const firstindex = lastindex - dataPage;
+    const currentData = arrayData.slice(firstindex, lastindex);
+    const totalPage = arrayData.length / dataPage;
+
+    const pageNum = {
+        width: "60px",
+        border: "1px solid #17A2BB",
+        color: "17A2BB",
+        textAlign: "center",
+        fontWeight: "bold"
+    };
+
     return(
     <form>
-      <div align="right">
-        <input type="text" name="searchId" id="searchId" value={this.state.searchId} onChange={this.handleChange} placeholder="ID"></input> &nbsp;&nbsp;
-        <input type="text" name="searchName" id="searchName" value={this.state.searchName} onChange={this.handleChange} placeholder="Name"></input> <p></p>
-        <input type="text" name="searchType" id="searchType" value={this.state.searchType} onChange={this.handleChange} placeholder="Type"></input> &nbsp;&nbsp;
-        <input type="text" name="searchData" id="searchData" value={this.state.searchData} onChange={this.handleChange} placeholder="Data"></input> <p></p>
-        <input type="button" className="btn btn-warning text-light" value="ล้างข้อมูล" onClick={this.clear}></input> &nbsp;&nbsp;
-        <input type="submit" value={"ค้นหา"} className={"btn btn-primary"} onClick={this.handleSubmit}/>
-      </div>
-      <p></p>
+      <div  align="center" className="card-header p-2">
+        <h2 className=" text-center text-uppercase text-muted">Produce-Page</h2>
+        <p></p>
+          <input type="text" name="searchId" id="searchId" value={this.state.searchId} onChange={this.handleChange} placeholder="ID"></input> &nbsp;&nbsp;
+          <input type="text" name="searchName" id="searchName" value={this.state.searchName} onChange={this.handleChange} placeholder="Name"></input> <p></p>
+          <input type="text" name="searchType" id="searchType" value={this.state.searchType} onChange={this.handleChange} placeholder="Type"></input> &nbsp;&nbsp;
+          <input type="text" name="searchData" id="searchData" value={this.state.searchData} onChange={this.handleChange} placeholder="Data"></input> <p></p>
+          <input type="button" className="btn btn-warning text-light" value="ล้างข้อมูล" onClick={this.clear}></input> &nbsp;&nbsp;
+          <input type="submit" value={"ค้นหา"} className={"btn btn-primary"} onClick={this.handleSubmit}/>
+        </div>
+        <p></p>
       <div>
+      <Card>
+            {/* <Card.Header><div align="right"> <span><a  href="/addcustomer" className="btn btn-primary">+Add Cutomer</a></span> </div></Card.Header> */}
+              <Card.Body>
         <table class="table table-bordered">
           <thead>
             <tr align="center">
@@ -176,13 +233,13 @@ export default class Homepopup extends Component{
               <th>Name</th>
               <th>Type</th>
               <th>Data</th>
-              <th>File</th>
-              <th>Add & Edit</th>
-              <th>Delete</th>
+              <th hidden={false}>File</th>
+              <th hidden={false}>Add & Edit</th>
+              <th hidden={false}>Delete</th>
             </tr>
           </thead>
           <tbody>
-          {this.state.arrayData.map((item, index) => (
+          {currentData.map((item, index) => (
             <tr key={index}>
               <td align="center">
                 <span className="btn">
@@ -197,21 +254,21 @@ export default class Homepopup extends Component{
               <td>{item.produce_name}</td>
               <td>{item.produce_type}</td>
               <td>{item.produce_data}</td>
-              <td align="" className="text">
+              <td align="" className="text" hidden={false}>
               {item.produce_file.map((file, indexfile) => (
                 <tr key={indexfile}>
                   <a href={'/application/' + file} target="_blank"><i className="fas fa-file"></i> {file}</a>
                   </tr>
               ))}
               </td>
-              <td align="center">
+              <td align="center" hidden={false}>
                 <span className="btn text-primary">
                   <i className="fas fa-edit" data-toggle="modal" data-target="#popupEdit" onClick={this.popup} id={
                     '{"_img":"'+item.produce_img+'","_id":"'+item._id+'", "item_id":"'+item.produce_id+'", "item_name":"'+item.produce_name+'", "item_type":"'+item.produce_type+'", "item_data":"'+item.produce_data+'", "_file":"'+item.produce_file+'"}'
                   }></i>
                 </span>
               </td>
-              <td align="center">
+              <td align="center" hidden={false}>
                 <span className="btn text-danger">
                   <i class="fas fa-trash-alt" onClick={this.handleDelete} id={'{"_id":"'+item._id+'", "_img":"'+item.produce_img+'", "_file":"'+item.produce_file+'"}'}></i>
                 </span>
@@ -220,7 +277,32 @@ export default class Homepopup extends Component{
             ))}
           </tbody>
         </table>
-      </div>
+        </Card.Body>
+        <Card.Footer>
+          <div style={{"float":"right"}}>
+            <InputGroup size="sm">
+              <InputGroup.Prepend>
+                <Button type="button" variant="secondary" disabled={currentPage === 1 ? true:false} onClick={this.Firstpage}>
+                  <i class="fas fa-angle-double-left"></i>First
+                </Button>
+                <Button type="button" variant="secondary" disabled={currentPage === 1 ? true:false} onClick={this.Prevpage}>
+                  <i class="fas fa-angle-left"></i>Prev
+                </Button>
+              </InputGroup.Prepend>
+              <FormControl style={pageNum} value={currentPage} disabled></FormControl>        
+              <InputGroup.Append>
+                <Button type="button" variant="secondary" disabled={currentPage === totalPage ? true:false} onClick={this.Nextpage}>
+                  <i class="fas fa-angle-right"></i>Next
+                </Button>
+                <Button type="button" variant="secondary" disabled={currentPage === totalPage ? true:false} onClick={this.Lastpage}>
+                  <i class="fas fa-angle-double-right"></i>Last
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
+          </div>
+        </Card.Footer>
+    </Card>
+    </div>
 
       <div className="modal fade" id="viewIMG" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered" role="document">

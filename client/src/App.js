@@ -93,9 +93,9 @@ export default function PersistentDrawerLeft() {
       if (response.data.logedin == true) {
         setOpen(true);
         if (response.data.level == 0) {
-          setLevel(true)
-        } else {
           setLevel(false)
+        } else {
+          setLevel(true)
         }
       } else {
         setOpen(false);
@@ -110,18 +110,22 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  const getUser = () => {
+  const getProduce = () => {
     axios.get('/getUser', {withCredentials: true})
     .then(response => {
       console.log(response.data[0].level)
       if (response.data[0].level == 0) {
-        browserHistory.push("/userhome");
+        browserHistory.push("/produce");
       } else {
-        browserHistory.push("/homepop");
+        browserHistory.push("/userhome");
       }
     }).catch(error => {
       console.log(error);
     });
+  }
+
+  const getCustomer= () => {
+    browserHistory.push("/customer");
   }
 
   const getLogout = () => {
@@ -137,9 +141,13 @@ export default function PersistentDrawerLeft() {
     });
   }
 
-  const getAdd = () => {
+  const getAddProduce = () => {
     browserHistory.push("/addproduce");
   }
+  const getAddCustomer = () => {
+    browserHistory.push("/addcustomer");
+  }
+  
 
   return (
     <div className={classes.root}>
@@ -192,25 +200,25 @@ export default function PersistentDrawerLeft() {
         <Divider />
         <List>
           {['ผลิตภัณฑ์'].map((text, index) => (
-            <ListItem button key={text} component="a" onClick={getUser}>
+            <ListItem button key={text} component="a" onClick={getProduce}>
               <ListItemIcon>{<i class="fas fa-box-open"></i>}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
           {['ลูกค้า'].map((text, index) => (
-            <ListItem button key={text} component="a" onClick={getUser}>
+            <ListItem button key={text} component="a" onClick={getCustomer}>
               <ListItemIcon>{<i class="fas fa-user-alt"></i>}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
           {['เพิ่มข้อมูลผลิตภัณฑ์'].map((text, index) => (
-            <ListItem button key={text} component="a" hidden={level} onClick={getAdd}>
+            <ListItem button key={text} component="a" hidden={level} onClick={getAddProduce}>
               <ListItemIcon>{<i class="fas fa-plus-square"></i>}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
           {['เพิ่มข้อมูลลูกค้า'].map((text, index) => (
-            <ListItem button key={text} component="a" hidden={level} onClick={getAdd}>
+            <ListItem button key={text} component="a" hidden={level} onClick={getAddCustomer}>
               <ListItemIcon>{<i class="fas fa-plus-circle"></i>}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>

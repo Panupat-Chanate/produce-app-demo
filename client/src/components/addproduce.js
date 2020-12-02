@@ -1,7 +1,7 @@
 import React,{Component, useState} from 'react';
 import axios from 'axios';
 
-export default class Home extends Component{
+export default class AddProduce extends Component{
   constructor(props) {
     super(props);
     this.state = {
@@ -137,26 +137,31 @@ export default class Home extends Component{
 
   render(){
     return(
-    <form>
-      <input type="file" id="imgCollection" onChange={this.handleImg} multiple></input>
+    <form align = "center" className="container p-5 col-md-6">
+       <div className="text-center text-uppercase text-muted"><h1>Produce Insert</h1></div>
+      <p></p>
+      <div className="card-header">
+      <p></p>
+      <input className="col-sm-6" type="file" id="imgCollection" onChange={this.handleImg} multiple></input>
       <span className="text-danger">{this.state.errors.imgCollection}</span><p></p>
 
-      <input type="file" id="fileCollection" onChange={this.handleFile} multiple></input>
+      <input className="col-sm-6" type="file" id="fileCollection" onChange={this.handleFile} multiple></input>
       <span className="text-danger">{this.state.errors.fileCollection}</span><p></p>
 
-      <input type="text" id="produceId" placeholder="รหัสผลิตภัณฑ์" value={this.state.produceId} onChange={this.handleChange}></input>
+      <input className="col-sm-6" type="text" id="produceId" placeholder="รหัสผลิตภัณฑ์" value={this.state.produceId} onChange={this.handleChange}></input>
       <span className="text-danger">{this.state.errors.produceId}</span><p></p>
 
-      <input type="text" id="produceName" placeholder="ชื่อผลิตภัณฑ์" value={this.state.produceName} onChange={this.handleChange}></input>
+      <input className="col-sm-6" type="text" id="produceName" placeholder="ชื่อผลิตภัณฑ์" value={this.state.produceName} onChange={this.handleChange}></input>
       <span className="text-danger">{this.state.errors.produceName}</span><p></p>
 
-      <input type="text" id="produceType" placeholder="ประเภทผลิตภัณฑ์" value={this.state.produceType} onChange={this.handleChange}></input>
+      <input className="col-sm-6" type="text" id="produceType" placeholder="ประเภทผลิตภัณฑ์" value={this.state.produceType} onChange={this.handleChange}></input>
       <span className="text-danger">{this.state.errors.produceType}</span><p></p>
 
-      <input type="text" id="produceData"  placeholder="ข้อมูลผลิตภัณฑ์" value={this.state.produceData} onChange={this.handleChange}></input>
+      <input className="col-sm-6" type="text" id="produceData"  placeholder="ข้อมูลผลิตภัณฑ์" value={this.state.produceData} onChange={this.handleChange}></input>
       <span className="text-danger">{this.state.errors.produceData}</span><p></p>
 
       <input type="submit" className="btn btn-primary" onClick={this.handleSubmit} value="เพิ่มข้อมูลผลิตภัณฑ์"></input><p></p>
+      </div>
     </form>
     )
   }
