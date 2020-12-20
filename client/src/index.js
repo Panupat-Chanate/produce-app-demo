@@ -1,19 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import Apps from './App2';
+import App from './Main';
 import * as serviceWorker from './serviceWorker';
-import {createStore} from 'redux';
-import commentReducer from './test/commentReducer'
-import { Provider } from 'react-redux';
-
-const store = createStore(commentReducer);
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <Apps />
-    </Provider>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

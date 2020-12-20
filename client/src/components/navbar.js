@@ -14,13 +14,8 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Main from './Main';
 import { browserHistory } from 'react-router';
 import axios from 'axios';
-import Signin from './components/signin';
-import UserProfile from './components/session';
-
-UserProfile.getName();
 
 const drawerWidth = 240;
 
@@ -92,7 +87,6 @@ export default function App() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [level, setLevel] = React.useState(false);
-  // const session = UserProfile.getName();
 
   const handleDrawerOpen = () => {
     axios.get('/checkSession', {withCredentials: true})
@@ -237,7 +231,6 @@ export default function App() {
         })}
       >
         <div className={classes.drawerHeader} />
-        <Main></Main>
       </main>
     </div>
   );

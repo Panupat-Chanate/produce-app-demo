@@ -1,129 +1,92 @@
-import React from 'react';
-  
-class DemoForm extends React.Component {
-    constructor() {
+import React, { Component } from 'react';
+import secure from '../image/secure.svg';
+import mobile from '../image/mobile.svg';
+import '../index.css';
+
+export default class App extends Component{
+  constructor(){
     super();
     this.state = {
-      input: {},
-      errors: {}
-    };
-     
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-     
-  handleChange(event) {
-    let input = this.state.input;
-    input[event.target.name] = event.target.value;
-  
-    this.setState({
-      input
-    });
-  }
-    
-  handleSubmit(event) {
-    event.preventDefault();
-  
-    if(this.validate()){
-        console.log(this.state);
-  
-        let input = {};
-        input["name"] = "";
-        input["email"] = "";
-        input["comment"] = "";
-        this.setState({input:input});
-  
-        alert('Demo Form is submited');
+      username: '',
+      password: '',
+      cpassword: '',
+      class: 'container'
     }
   }
-  
-  validate(){
-      let input = this.state.input;
-      let errors = {};
-      let isValid = true;
-  
-      if (!input["name"]) {
-        isValid = false;
-        errors["name"] = "Please enter your name.";
-      }
-  
-      if (!input["email"]) {
-        isValid = false;
-        errors["email"] = "Please enter your email Address.";
-      }
-  
-      if (typeof input["email"] !== "undefined") {
-          
-        var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-        if (!pattern.test(input["email"])) {
-          isValid = false;
-          errors["email"] = "Please enter valid email address.";
-        }
-      }
-  
-      if (!input["comment"]) {
-        isValid = false;
-        errors["comment"] = "Please enter your comment.";
-      }
-  
-      this.setState({
-        errors: errors
-      });
-  
-      return isValid;
+
+  handleSignup = () => {
+    this.setState({class: 'container sign-up-mode'});
   }
-     
-  render() {
+
+  handleSignin = () => {
+    this.setState({class: 'container sign-in-mode'});
+  }
+
+  render () {
     return (
-      <div>
-        <h1>React Form Validation Example - ItSolutionStuff.com</h1>
-        <form onSubmit={this.handleSubmit}>
-  
-          <div class="form-group">
-            <label for="name">Name:</label>
-            <input 
-              type="text" 
-              name="name" 
-              value={this.state.input.name}
-              onChange={this.handleChange}
-              class="form-control" 
-              placeholder="Enter name" 
-              id="name" />
-  
-              <div className="text-danger">{this.state.errors.name}</div>
+      <div className={this.state.class}>
+        <div className="forms-container">
+          <div className="signin-signup">
+            <form className="sign-in-form">
+              <h2 className="title">Sign in</h2>
+              <div className="input-field">
+                <i className="fas fa-user"></i>
+                <input type="text" placeholder="Username" />
+              </div>
+              <div className="input-field">
+                <i className="fas fa-lock"></i>
+                <input type="password" placeholder="Password" />
+              </div>
+              <input type="submit" value="Login" className="btn solid" />
+            </form>
+            <form className="sign-up-form">
+              <h2 className="title">Sign up</h2>
+              <div className="input-field">
+                <i className="fas fa-user"></i>
+                <input type="text" placeholder="Username" />
+              </div>
+              <div className="input-field">
+                <i className="fas fa-envelope"></i>
+                <input type="email" placeholder="Email" />
+              </div>
+              <div className="input-field">
+                <i className="fas fa-lock"></i>
+                <input type="password" placeholder="Password" />
+              </div>
+              <input type="submit" className="btn" value="Sign up" />
+            </form>
           </div>
-  
-          <div class="form-group">
-            <label for="email">Email Address:</label>
-            <input 
-              type="text" 
-              name="email" 
-              value={this.state.input.email}
-              onChange={this.handleChange}
-              class="form-control" 
-              placeholder="Enter email" 
-              id="email" />
-   
-              <div className="text-danger">{this.state.errors.email}</div>
+        </div>
+
+        <div className="panels-container">
+          <div className="panel left-panel">
+            <div className="content">
+              <h3>New here ?</h3>
+              <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
+                ex ratione. Aliquid!
+              </p>
+              <button className="btn transparent" id="sign-up-btn" onClick={this.handleSignup}>
+                Sign up
+              </button>
+            </div>
+            <img src={mobile} className="image" alt="" />
           </div>
-  
-          <div class="form-group">
-            <label for="comment">Comment:</label>
-            <textarea 
-              name="comment"
-              value={this.state.input.comment} 
-              onChange={this.handleChange}
-              placeholder="Enter comment"
-              class="form-control" />
-  
-              <div className="text-danger">{this.state.errors.comment}</div>
+          <div className="panel right-panel">
+            <div className="content">
+              <h3>One of us ?</h3>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
+                laboriosam ad deleniti.
+              </p>
+              <button className="btn transparent" id="sign-in-btn" onClick={this.handleSignin}>
+                Sign in
+              </button>
+            </div>
+            <img src={secure} className="image" alt="" />
           </div>
-             
-          <input type="submit" value="Submit" class="btn btn-success" />
-        </form>
+        </div>
       </div>
     );
   }
 }
-  
-export default DemoForm;

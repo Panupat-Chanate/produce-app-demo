@@ -1,109 +1,107 @@
-import React, { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import React, { Component, useRef } from 'react';
 import axios from 'axios';
-// import { yupResolver } from '@hookform/resolvers';
-// import * as Yup from "yup";
+import { browserHistory } from 'react-router';
 
-// const schema = Yup.object().shape({
-//   UserName: Yup.string()
-//     .required('ป้อนชื่อผู้ใช้')
-//     .matches(/[A-Za-z0-9]+/ , 'กรุณากรอกให้ถูกต้อง')
-//     .min(2, 'สั้นเกินไป')
-//     .max(30, 'ยาวเกินไป'),
-//   Password: Yup.string()
-//     .required('ป้อนพาสเวิร์ด')
-//     .matches(/[A-Za-z0-9]+/ , 'กรุณากรอกให้ถูกต้อง')
-//     .min(8, 'สั้นเกินไป')
-//     .max(8, 'ยาวเกินไป'),
-//   CPassword: Yup.string()
-//     .required('ยืนยันพาสเวิร์ด')
-//     .matches(/[A-Za-z0-9]+/ , 'กรุณากรอกให้ถูกต้อง')
-//     .min(8, 'สั้นเกินไป')
-//     .max(8, 'ยาวเกินไป'),
-//   // picture: Yup.mixed()
-//   //   .test("type", "ไฟล์ .jpeg เท่านั้น", (value) => {
-//   //     return value && value[0].type === 'image/jpeg';
-//   //   })
-//   //   .test("fileSize", "ไฟล์ขนาดใหญ่เกินไป", (value) => {
-//   //     return value && value[0].size <= 5000000;
-//   //   })
-// });
-
-export default function Signup() {
-    const { register, handleSubmit, setValue, errors, watch } = useForm({
-      // resolver: yupResolver(schema)
-    });
-    const [file, setFile] = useState('');
-    const password = useRef({});
-    password.current = watch("Password", "");
-
-    const onSubmit = data => {
-      console.log(data)
-      var value = {
-        checkUser: data.UserName
-      }
-      axios.post('/signup', data)
-      .then((response) => {
-        var checkedState = response.data.checkedState
-        if (checkedState === true) {
-          alert("บุคคลนี้ได้ลงทะเบียนไปแล้ว");
+export default class Signin extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            UserName: '',
+            Password: '',
+            CPassword: '',
+            errors: ''
         }
-        if (checkedState === false) {
-          alert("สมัครสมาชิกเสร็จสิ้น");
-          setValue("UserName", null)
-          setValue("Password", null)
-          setValue("CPassword", null)
-          setValue("picture", null)
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      }); 
-    };
+    }
 
-  return (
-    <div align = "center">
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="text" name="UserName" ref={register
-        ({
-          required: "กรุณากรอกชื่อผู้ใช้",
-          minLength: {
-            value: 2,
-            message: "สั้นเกินไป"
-          }
-        })
-      } placeholder="Username" />
-      <p></p>
-      <span >{errors.UserName?.message}</span>
-      <p></p>
-      <input type="password" name="Password" 
-        ref={register
-          ({
-            required: "กรุณากรอกพาสเวิร์ด",
-            minLength: {
-              value: 8,
-              message: "พาสเวิร์ดมีอย่างน้อย 8 ตัว"
-            }
-          })
-        } placeholder="Password" />
-      <p></p>
-      <span >{errors.Password?.message}</span>
-      <p></p>
-      <input type="password" name="CPassword" ref={register
-        ({
-          validate: value =>
-            value === password.current || "พาสเวิร์ดไม่ตรงกัน"
-        })
-      } placeholder="Confirm-Password" />
-      <p></p>
-      <span >{errors.CPassword?.message}</span>
-      <p></p>
-      {/* <input type="file"  name="picture" id="file" ref={register({required: "อัพโหลดรูปโปรไฟล์"})} onChange={handleSelect} />
-      <span >{errors.picture?.message}</span>
-      <p></p> */}
-      <input type="submit" className="btn btn-primary" value="สมัครสมาชิก"/>
-      <span><a  href="/"> เข้าสู่ระบบ</a></span>
-    </form>
-    </div>
-  );
+    handleSubmit = (e) => {
+        e.preventDefault()
+        if(this.validate()){
+            var value = {
+                UserName: this.state.UserName,
+                Password: this.state.Password
+              }
+            axios.post('/signup', value)
+            .then((response) => {
+                var checkedState = response.data.checkedState
+                if (checkedState === true) {
+                alert("บุคคลนี้ได้ลงทะเบียนไปแล้ว");
+                }
+                if (checkedState === false) {
+                alert("สมัครสมาชิกเสร็จสิ้น");
+                this.setState({
+                    UserName: '',
+                    Password: '',
+                    CPassword: ''
+                })
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
+
+    handleChange=(e)=>{
+        this.setState({
+          [e.target.id]: e.target.value
+        });
+    }
+
+    validate(){
+        let errors = {};
+        let isValid = true;
+    
+        if (!this.state.UserName) {
+          isValid = false;
+          errors["UserName"] = "ป้อนชื่อผู้ใช้";
+        }
+    
+        if (!this.state.Password) {
+          isValid = false;
+          errors["Password"] = "ป้อนรหัสผ่าน";
+        }
+
+        if (!this.state.CPassword) {
+            isValid = false;
+            errors["CPassword"] = "ป้อนรหัสผ่านอีกครั้ง";
+        }
+
+        if (this.state.Password !== this.state.CPassword) {
+            isValid = false;
+            errors["CPassword"] = "พาสเวิร์ดไม่ตรงกัน";
+        }
+    
+        this.setState({
+          errors: errors
+        });
+    
+        return isValid;
+    }
+
+    render () {
+        return (
+            
+            <form>
+                <div align = "center">
+                    <input type="text" id="UserName" value={this.state.UserName} placeholder="Username" onChange={this.handleChange}></input>
+                    <p></p>
+                    <span className="text-danger">{this.state.errors.UserName}</span>
+                    <p></p>
+
+                    <input type="password" id="Password" value={this.state.Password} placeholder="Password" onChange={this.handleChange}></input>
+                    <p></p>
+                    <span className="text-danger">{this.state.errors.Password}</span>
+                    <p></p>
+
+                    <input type="password" id="CPassword" value={this.state.CPassword} placeholder="Confirm-Password" onChange={this.handleChange}></input>
+                    <p></p>
+                    <span className="text-danger">{this.state.errors.CPassword}</span>
+                    <p></p>
+
+                    <input type="submit" className="btn btn-primary" onClick={this.handleSubmit} value="สมัครสมาชิก"></input>
+                    <span><a  href="/"> เข้าสู่ระบบ</a></span>
+                </div>
+            </form>
+        )
+    }
 }

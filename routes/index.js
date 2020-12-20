@@ -79,7 +79,7 @@ router.post('/upload', upload.array('allCollection', 6), (req, res, next) => {
     // console.log(objData);
 
     if (req.body) {
-        sql = "INSERT INTO tb_produce (produce_id, produce_name, produce_type, produce_data, produce_img, produce_file) VALUES('"+ objData.produceId +"', '"+ objData.produceName +"','"+ objData.produceType +"','"+ objData.produceData +"', '"+ jsonImg +"', '"+ jsonFile +"')"
+        sql = "INSERT INTO tb_produce (produce_id, produce_name, produce_type, produce_detail, produce_img, produce_file) VALUES('"+ objData.produceId +"', '"+ objData.produceName +"','"+ objData.produceType +"','"+ objData.produceDetail +"', '"+ jsonImg +"', '"+ jsonFile +"')"
         con.query(sql, function (err, result) {
             if (err) throw err;
             res.json(result);
@@ -88,14 +88,14 @@ router.post('/upload', upload.array('allCollection', 6), (req, res, next) => {
 });
 
 router.post('/signin', async (req, res) => {
-    console.log(req.body.checkUser)
-    console.log(req.body.checkPass)
-    sql = "SELECT username FROM user WHERE username = '"+ req.body.checkUser +"'"
+    console.log(req.body.UserName)
+    console.log(req.body.Password)
+    sql = "SELECT username FROM user WHERE username = '"+ req.body.UserName +"'"
     con.query(sql, function (err, result) {
         if (err) return console.log(err);
         var strUser = JSON.stringify(result)
         if (strUser != "[]") {
-            sql = "SELECT level FROM user WHERE username = '"+ req.body.checkUser +"' AND password = '"+ req.body.checkPass +"'"
+            sql = "SELECT level FROM user WHERE username = '"+ req.body.UserName +"' AND password = '"+ req.body.Password +"'"
             con.query(sql, function (err, result) {
                 if (err) return console.log(err);
                 var strResult = JSON.stringify(result)
@@ -116,15 +116,14 @@ router.post('/signin', async (req, res) => {
                     var checked ={
                         checkedUser: true,
                         checkedPass: true,
-                        checkedLevel: strResult2
+                        // checkedLevel: strResult2
                     };
                     req.session.logedin = true;
-                    req.session.username = req.body.checkUser;
+                    req.session.username = req.body.UserName;
                     req.session.level = strResult2;
                     console.log(req.session.logedin , req.session.username);
                     console.log(checked);
                     res.json(checked);
-                    // res.redirect('/search')
                 }
             })
         } else {
@@ -139,7 +138,7 @@ router.post('/signin', async (req, res) => {
 
 router.post('/addproduce', async (req, res) => {
     const storage = multer.diskStorage({
-        destination: "D:/OSD/produces-app/client/public/image",
+        destination: "D:/OSD/produces-demo/client/public/image",
         filename: function(req, file, cb){
            cb(null,"PRODUCE-" + Date.now() + path.extname(file.originalname));
         }
@@ -157,7 +156,7 @@ router.post('/addproduce', async (req, res) => {
         if (req.body) {
             // const jsonImg = '{ "image1":"'++'","image2":"'++'" }'
             console.log(req.file.filename)
-            sql = "INSERT INTO tb_produce (produce_id, produce_name, produce_type, produce_data, produce_img) VALUES('"+ objData.ProduceId +"', '"+ objData.ProduceName +"','"+ objData.ProduceType +"','"+ objData.ProduceData +"', '"+ req.file.filename +"')"
+            sql = "INSERT INTO tb_produce (produce_id, produce_name, produce_type, produce_data, produce_img) VALUES('"+ objData.ProduceId +"', '"+ objData.ProduceName +"','"+ objData.ProduceType +"','"+ objData.ProduceDetail +"', '"+ req.file.filename +"')"
             con.query(sql, function (err, result) {
                 if (err) throw err;
                 res.json(true);
@@ -176,79 +175,80 @@ router.get('/showProduce/:Id', async (req, res) => {
     })
 });
 
-router.get("/icon/:id", (req, res) => {
+router.get("/qrcode/:id", (req, res) => {
     const id = req.params.id
-    fs.readFile(`./public/upload/${id}.jpg`, function (err, data) {
-        if (err) throw err
-        else {
-            res.writeHead(200, { "Content-Type": "image/jpeg" })
-            res.end(data)
-        }
-    })
+    res.send(id)
+    // fs.readFile(`./public/upload/${id}.jpg`, function (err, data) {
+    //     if (err) throw err
+    //     else {
+    //         res.writeHead(200, { "Content-Type": "image/jpeg" })
+    //         res.end(data)
+    //     }
+    // })
 })
 
 router.post('/search', async (req, res) => {
     console.log(req.body)
     let sql = "SELECT * FROM tb_produce "
-    if (req.body.searchId != null && req.body.searchName != null && req.body.searchType != null && req.body.searchData != null) {
+    if (req.body.searchId != null && req.body.searchName != null && req.body.searchType != null && req.body.searchDetail != null) {
         console.log("1")
-       sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+       sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType != null && req.body.searchData != null) {
+    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType != null && req.body.searchDetail != null) {
         console.log("2")
-        sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType != null && req.body.searchData != null) {
+    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType != null && req.body.searchDetail != null) {
         console.log("3")
-        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_type LIKE '%"+ req.body.searchType +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType == null && req.body.searchData != null) {
+    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType == null && req.body.searchDetail != null) {
         console.log("4")
-        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType != null && req.body.searchData == null) {
+    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType != null && req.body.searchDetail == null) {
         console.log("5")
         sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType != null && req.body.searchData != null) {
+    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType != null && req.body.searchDetail != null) {
         console.log("6")
-        sql+="WHERE produce_type LIKE '%"+ req.body.searchType +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_type LIKE '%"+ req.body.searchType +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType == null && req.body.searchData == null) {
+    else if (req.body.searchId != null && req.body.searchName != null && req.body.searchType == null && req.body.searchDetail == null) {
         console.log("7")
         sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_name LIKE '%"+ req.body.searchName +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType == null && req.body.searchData != null) {
+    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType == null && req.body.searchDetail != null) {
         console.log("8")
-        sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType != null && req.body.searchData == null) {
+    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType != null && req.body.searchDetail == null) {
         console.log("9")
         sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_type LIKE '%"+ req.body.searchType +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType != null && req.body.searchData == null) {
+    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType != null && req.body.searchDetail == null) {
         console.log("10")
         sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%' AND produce_type LIKE '%"+ req.body.searchType +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType == null && req.body.searchData != null) {
+    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType == null && req.body.searchDetail != null) {
         console.log("11")
-        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%' AND produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
-    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType == null && req.body.searchData == null) {
+    else if (req.body.searchId != null && req.body.searchName == null && req.body.searchType == null && req.body.searchDetail == null) {
         console.log("12")
         sql+="WHERE produce_id LIKE '%"+ req.body.searchId +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType == null && req.body.searchData == null) {
+    else if (req.body.searchId == null && req.body.searchName != null && req.body.searchType == null && req.body.searchDetail == null) {
         console.log("13")
         sql+="WHERE produce_name LIKE '%"+ req.body.searchName +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType != null && req.body.searchData == null) {
+    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType != null && req.body.searchDetail == null) {
         console.log("14")
         sql+="WHERE produce_type LIKE '%"+ req.body.searchType +"%'"
     }
-    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType == null && req.body.searchData != null) {
+    else if (req.body.searchId == null && req.body.searchName == null && req.body.searchType == null && req.body.searchDetail != null) {
         console.log("15")
-        sql+="WHERE produce_data LIKE '%"+ req.body.searchData +"%'"
+        sql+="WHERE produce_detail LIKE '%"+ req.body.searchDetail +"%'"
     }
     con.query(sql, function (err, result) {
         // console.log(result)
@@ -256,6 +256,7 @@ router.post('/search', async (req, res) => {
         const resJson= [];
 
         var strResult = JSON.parse(JSON.stringify(result))
+        console.log('kk',result)
         if (strResult != "[]") {
             console.log(strResult)
             for (var i = 0; i < strResult.length; i++) {
@@ -264,7 +265,7 @@ router.post('/search', async (req, res) => {
                     produce_id: strResult[i].produce_id,
                     produce_name: strResult[i].produce_name,
                     produce_type: strResult[i].produce_type,
-                    produce_data: strResult[i].produce_data,
+                    produce_detail: strResult[i].produce_detail,
                     produce_img: strResult[i].produce_img.split(','),
                     produce_file: strResult[i].produce_file.split(',')
                 })
@@ -313,6 +314,34 @@ router.post('/deleteproduce', async (req, res) => {
     })
 })
 
+router.post('/deletefile', async (req, res) => {
+    console.log(req.body)
+    console.log(req.body._equal[0])
+    const count = req.body._equal.length
+    var str = ""
+    for (var i = 0; i < count; i++) {
+        str = req.body._equal[i]
+        const pathToFile = "D:/OSD/produces-demo/client/public/application/"+str
+        fs.unlink(pathToFile, function(err) {
+            if (err) {
+                return console.log(err);
+            } else {
+                console.log("Successfully deleted the file.")
+            }
+        })
+    }
+    var strFile = req.body._notEqual.toString();
+    console.log(strFile)
+    // if (strFile === "[]") {
+    //     strFile = ''
+    // }
+    // sql = "UPDATE tb_produce SET produce_file = '"+ strFile +"'  WHERE _id = '"+ req.body._id +"'"
+    // con.query(sql, function (err, result) {
+    //     if (err) return console.log(err);
+    //     res.json(result);
+    // })
+})
+
 router.post('/maxfile', async (req, res) => {
     console.log(req.body._id)
     sql = "SELECT produce_file FROM tb_produce WHERE _id = '"+ req.body._id +"'"
@@ -352,7 +381,7 @@ router.post('/editproduce', upload.array('fileCollection', 6), async (req, res) 
         } 
     }
     console.log(sumFile)
-    sql = "UPDATE tb_produce SET produce_name = '"+ req.body.editName +"', produce_type = '"+ req.body.editType +"', produce_data = '"+ req.body.editData +"', produce_file = '"+ sumFile +"'  WHERE _id = '"+ req.body.edit_id +"'"
+    sql = "UPDATE tb_produce SET produce_name = '"+ req.body.editName +"', produce_type = '"+ req.body.editType +"', produce_detail = '"+ req.body.editDetail+"', produce_file = '"+ sumFile +"'  WHERE _id = '"+ req.body.edit_id +"'"
     con.query(sql, function (err, result) {
         if (err) return console.log(err);
         res.json(result);

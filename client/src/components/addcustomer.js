@@ -1,56 +1,165 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React,{Component} from 'react';
 import axios from 'axios';
 
-export default function AddCustomer() {
-    const { register, handleSubmit, setValue, errors } = useForm({
-      // resolver: yupResolver(schema)
-    });
-    
-    const onSubmit = data => {
-      console.log(data)
-      axios.post("/addCustomer",data)
-        .then((response) => {
-          alert("อัพโหลดข้อมูลเสร็จสิ้น");
-        }).catch((error) => {
-      });
-      setValue("CustomerId", null)
-      setValue("CustomerName", null)
-      setValue("CustomerEmail", null)
-      setValue("CustomerAddress", null)
-      setValue("CustomerData", null)
-    };
+export default class AddProduce extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      fileCollection: '',
+      customerId: '',
+      customerName: '',
+      customerEmail: '',
+      customerAddress: '',
+      errors: ''
+    }
+    this.handleFile = this.handleFile.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-  return (
-    <div>
-    <form onSubmit={handleSubmit(onSubmit)} align = "center" className="container p-5 col-md-6" >
-      <div className="text-center text-uppercase text-muted"><h1>Customer Insert</h1></div>
+  handleSubmit = (e) => {
+    e.preventDefault()
+    if(this.validate()){
+      const files = []
+      const count = (this.state.fileCollection.length + this.state.imgCollection.length)
+      var i2 = 0
+      console.log(this.state.imgCollection)
+      console.log(this.state.fileCollection)
+      for (var i = 0; i < count; i++) {
+        if (i < this.state.imgCollection.length) {
+          files.push(this.state.imgCollection[i])
+        } else {
+          files.push(this.state.fileCollection[i2])
+          i2++
+        }
+      }
+      const formData = new FormData();
+      for (const key of Object.keys(files)) {
+        formData.append('allCollection', files[key])
+      }
+      formData.append('produceId', this.state.produceId)
+      formData.append('produceName', this.state.produceName)
+      formData.append('produceType', this.state.produceType)
+      formData.append('produceData', this.state.produceData)
+      axios.post("/upload",formData)
+      .then((response) => {
+        console.log(response.data)
+        this.setState({
+          imgCollection: '',
+          produceId: '',
+          produceName: '',
+          produceType: '',
+          produceData: ''
+        })
+      }).catch((error) => {
+        console.log(error)
+      });
+    }
+  }
+
+  handleChange=(e)=>{
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+  }
+
+  handleImg=(e)=>{
+    for (var i = 0; i < e.target.files.length; i++) {
+        const spilt = e.target.files[i].type.split('/',1)[0]
+        console.log(spilt)
+        if (spilt !== "image") {
+            alert("ไฟล์รูปภาพเท่านั้น")
+        } else {
+          this.setState({
+            [e.target.id]: e.target.files
+          });
+        }
+    }
+  }
+
+  handleFile=(e)=>{
+    for (var i = 0; i < e.target.files.length; i++) {
+      const spilt = e.target.files[i].type.split('/',1)[0]
+      console.log(spilt)
+      if (spilt !== "application") {
+          alert("ไฟล์เอกสารเท่านั้น")
+      } else {
+        this.setState({
+          [e.target.id]: e.target.files
+        });
+      }
+    }
+  }
+
+  validate(){
+    let errors = {};
+    let isValid = true;
+
+    if (!this.state.imgCollection) {
+      isValid = false;
+      errors["imgCollection"] = " Please enter your imgCollection.";
+    }
+
+    if (!this.state.fileCollection) {
+      isValid = false;
+      errors["fileCollection"] = " Please enter your fileCollection.";
+    }
+
+    if (!this.state.produceId) {
+      isValid = false;
+      errors["produceId"] = " Please enter your produceId.";
+    }
+
+    if (!this.state.produceName) {
+      isValid = false;
+      errors["produceName"] = " Please enter your produceName.";
+    }
+
+    if (!this.state.produceType) {
+      isValid = false;
+      errors["produceType"] = " Please enter your produceType.";
+    }
+
+    if (!this.state.produceData) {
+      isValid = false;
+      errors["produceData"] = " Please enter your produceData.";
+    }
+
+    this.setState({
+      errors: errors
+    });
+
+    return isValid;
+  }
+
+  render(){
+    return(
+    <form align = "center" className="container p-5 col-md-6">
+       <div className="text-center text-uppercase text-muted"><h1>Customer Insert</h1></div>
       <p></p>
       <div className="card-header">
       <p></p>
-      {/* <input type="file" name="picture" id="picture" className="col-sm-6" ref={register({required: "อัพโหลดไฟล์ PDF"})} multiple/>
-      <span><p></p>{errors.picture?.message}</span> */}
-      <p></p>
-      <input type="text" name="CustomerId" className="col-sm-6" ref={register({required: "กรุณากรอกรหัสลูกค้า"})} placeholder="รหัสลูกค้า:" />
-      <span><p></p>{errors.CustomerId?.message}</span>
-      <p></p>
-      <input type="text" name="CustomerName" className="col-sm-6" ref={register({required: "กรุณากรอกรายชื่อลูกค้า"})} placeholder="รายชื่อลูกค้า:" />
-      <span><p></p>{errors.CustomerName?.message}</span>
-      <p></p>
-      <input type="email" name="CustomerEmail" className="col-sm-6" ref={register({required: "กรุณากรอก Email ลูกค้า"})} placeholder="Email:" />
-      <span><p></p>{errors.CustomerEmail?.message}</span>
-      <p></p>
-      <input type="text" name="CustomerAddress" className="col-sm-6" ref={register({required: "กรุณากรอกข้อมูลที่อยู่ลูกค้า"})} placeholder="ข้อมูลที่อยู่ลูกค้า:" />
-      <span><p></p>{errors.CustomerAddress?.message}</span>
-      <p></p>
-      <input type="text" name="CustomerData" className="col-sm-6" ref={register({required: "กรุณากรอกข้อมูลผลิตภัณฑ์ของลูกค้า"})} placeholder="ข้อมูลผลิตภัณฑ์ลูกค้า:" />
-      <span><p></p>{errors.CustomerData?.message}</span>
-      <p></p><p></p>
-      <input type="submit" className="btn btn-primary" value="เพิ่มข้อมูลลูกค้า"/>&nbsp;&nbsp;
-      <span><a href="/searchcustomer" className="btn btn-secondary">Back</a></span>
-      <p></p>
+      <input className="col-sm-6" type="file" id="imgCollection" onChange={this.handleImg} multiple></input>
+      <span className="text-danger">{this.state.errors.imgCollection}</span><p></p>
+
+      <input className="col-sm-6" type="file" id="fileCollection" onChange={this.handleFile} multiple></input>
+      <span className="text-danger">{this.state.errors.fileCollection}</span><p></p>
+
+      <input className="col-sm-6" type="text" id="produceId" placeholder="รหัสผลิตภัณฑ์" value={this.state.produceId} onChange={this.handleChange}></input>
+      <span className="text-danger">{this.state.errors.produceId}</span><p></p>
+
+      <input className="col-sm-6" type="text" id="produceName" placeholder="ชื่อผลิตภัณฑ์" value={this.state.produceName} onChange={this.handleChange}></input>
+      <span className="text-danger">{this.state.errors.produceName}</span><p></p>
+
+      <input className="col-sm-6" type="text" id="produceType" placeholder="ประเภทผลิตภัณฑ์" value={this.state.produceType} onChange={this.handleChange}></input>
+      <span className="text-danger">{this.state.errors.produceType}</span><p></p>
+
+      <textarea rows="5" cos="28" className="col-sm-6" type="text" id="produceData"  placeholder="ข้อมูลผลิตภัณฑ์" value={this.state.produceData} onChange={this.handleChange}></textarea>
+      <span className="text-danger">{this.state.errors.produceData}</span><p></p>
+
+      <input type="submit" className="btn btn-primary" value="เพิ่มข้อมูลผลิตภัณฑ์"></input><p></p>
       </div>
     </form>
-    </div>
-  );
+    )
+  }
 }

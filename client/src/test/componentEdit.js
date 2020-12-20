@@ -1,33 +1,28 @@
 import React , {Component} from 'react';
 import {connect} from 'react-redux'
 
-class CommentForm extends Component {
+class CommentEdit extends Component {
     handlesubmit=(e)=>{
         e.preventDefault();
-        const name = this.getName.value
-        const message = this.getMessage.value
+        const newname = this.getName.value
+        const newmessage = this.getMessage.value
         const data = {
             id: new Date(),
-            name,
-            message,
-            editing: false
+            newname,
+            newmessage
+            // editing: false
         }
-        this.props.dispatch({
-            type:'LEVEL',
-            data
-        })
     }
     render () {
         return (
             <div>
-                <h1>Add Comment</h1>
                 <form onSubmit={this.handlesubmit}>
                     <input type='text' ref={(input)=>this.getName = input}></input><p></p>
                     <textarea rows="5" cos="28"  ref={(input)=>this.getMessage = input}></textarea><p></p>
-                    <button>Comment</button>
+                    <button>Update</button>
                 </form>
             </div>
         )
     }
 }
-export default connect()(CommentForm);
+export default connect()(CommentEdit);

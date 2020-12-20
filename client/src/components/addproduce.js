@@ -1,4 +1,4 @@
-import React,{Component, useState} from 'react';
+import React,{Component} from 'react';
 import axios from 'axios';
 
 export default class AddProduce extends Component{
@@ -10,14 +10,14 @@ export default class AddProduce extends Component{
       produceId: '',
       produceName: '',
       produceType: '',
-      produceData: '',
+      produceDetail: '',
       errors: ''
     }
     this.handleImg = this.handleImg.bind(this);
     this.handleFile = this.handleFile.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-}
+  }
 
   handleSubmit = (e) => {
     e.preventDefault()
@@ -42,7 +42,7 @@ export default class AddProduce extends Component{
       formData.append('produceId', this.state.produceId)
       formData.append('produceName', this.state.produceName)
       formData.append('produceType', this.state.produceType)
-      formData.append('produceData', this.state.produceData)
+      formData.append('produceDetail', this.state.produceDetail)
       axios.post("/upload",formData)
       .then((response) => {
         console.log(response.data)
@@ -51,7 +51,7 @@ export default class AddProduce extends Component{
           produceId: '',
           produceName: '',
           produceType: '',
-          produceData: ''
+          produceDetail: ''
         })
       }).catch((error) => {
         console.log(error)
@@ -77,7 +77,6 @@ export default class AddProduce extends Component{
           });
         }
     }
-    
   }
 
   handleFile=(e)=>{
@@ -91,7 +90,7 @@ export default class AddProduce extends Component{
           [e.target.id]: e.target.files
         });
       }
-  }
+    }
   }
 
   validate(){
@@ -123,9 +122,9 @@ export default class AddProduce extends Component{
       errors["produceType"] = " Please enter your produceType.";
     }
 
-    if (!this.state.produceData) {
+    if (!this.state.produceDetail) {
       isValid = false;
-      errors["produceData"] = " Please enter your produceData.";
+      errors["produceDetail"] = " Please enter your produceDetail.";
     }
 
     this.setState({
@@ -133,12 +132,12 @@ export default class AddProduce extends Component{
     });
 
     return isValid;
-}
+  }
 
   render(){
     return(
     <form align = "center" className="container p-5 col-md-6">
-       <div className="text-center text-uppercase text-muted"><h1>Produce Insert</h1></div>
+       <div className="text-center text-uppercase text-muted"><h2>Produce Insert</h2></div>
       <p></p>
       <div className="card-header">
       <p></p>
@@ -157,10 +156,10 @@ export default class AddProduce extends Component{
       <input className="col-sm-6" type="text" id="produceType" placeholder="ประเภทผลิตภัณฑ์" value={this.state.produceType} onChange={this.handleChange}></input>
       <span className="text-danger">{this.state.errors.produceType}</span><p></p>
 
-      <input className="col-sm-6" type="text" id="produceData"  placeholder="ข้อมูลผลิตภัณฑ์" value={this.state.produceData} onChange={this.handleChange}></input>
-      <span className="text-danger">{this.state.errors.produceData}</span><p></p>
+      <textarea rows="5" cos="28" className="col-sm-6" type="text" id="produceDetail"  placeholder="ข้อมูลผลิตภัณฑ์" value={this.state.produceDetail} onChange={this.handleChange}></textarea>
+      <span className="text-danger">{this.state.errors.produceDetail}</span><p></p>
 
-      <input type="submit" className="btn btn-primary" onClick={this.handleSubmit} value="เพิ่มข้อมูลผลิตภัณฑ์"></input><p></p>
+      <input type="submit" className="btn btn-primary" value="เพิ่มข้อมูลผลิตภัณฑ์" onClick={this.handleSubmit}></input><p></p>
       </div>
     </form>
     )

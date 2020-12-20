@@ -189,7 +189,7 @@ Nextpage = () => {
     return(
     <form>
       <div align="center" className="card-header p-2">
-      <h1 className=" text-center text-uppercase text-muted">Customer Page</h1>
+      <h2 className=" text-center text-uppercase text-muted">Customer Page</h2>
       <p></p>
         <input type="text" name="searchcusId" id="searchcusId" value={this.state.searchcusId} onChange={this.handleChange} placeholder="ID"></input> &nbsp;&nbsp;
         <input type="text" name="searchcusName" id="searchcusName" value={this.state.searchcusName} onChange={this.handleChange} placeholder="Name"></input> &nbsp;&nbsp;
@@ -198,10 +198,7 @@ Nextpage = () => {
         <input type="text" name="searchcusAddress" id="searchcusAddress" value={this.state.searchcusAddress} onChange={this.handleChange} placeholder="Address"></input> &nbsp;&nbsp;
         <input type="text" name="searchcusData" id="searchcusData" value={this.state.searchcusData} onChange={this.handleChange} placeholder="Produce Data"></input> &nbsp;&nbsp;
         <p></p>
-           <input type="submit" value={"ค้นหา"} className={"btn btn-success"} onClick={this.handleSubmit}/>&nbsp;&nbsp;
-           <span><a  href="/homepop" className="btn btn-secondary">Back</a></span>&nbsp;&nbsp; 
-           <span><a  href="/addcustomer" className="btn btn-primary">+Add Cutomer</a></span>
-         
+        <input type="submit" value={"ค้นหา"} className={"btn btn-success"} onClick={this.handleSubmit}/>
       </div>
     
       <p></p>
@@ -252,23 +249,21 @@ Nextpage = () => {
                             <InputGroup.Prepend>
                                 <Button type="button" variant="secondary" disabled={currentPage === 1 ? true:false} onClick={this.Firstpage}>
 
-                                <i class="fas fa-angle-double-left"></i>First
+                                <i class="fas fa-angle-double-left"></i> First
                                 </Button>
                                 <Button type="button" variant="secondary" disabled={currentPage === 1 ? true:false} onClick={this.Prevpage}>
 
-                                <i class="fas fa-angle-left"></i>Prev
+                                <i class="fas fa-angle-left"></i> Prev
                                 </Button>
                             </InputGroup.Prepend>
                             <FormControl style={pageNum} value={currentPage} disabled></FormControl>
                             {/* <FormLabel style={pageNum} name="currentPage" placeholder={currentPage}></FormLabel> */}
                             <InputGroup.Append>
                                 <Button type="button" variant="secondary" disabled={currentPage === totalPage ? true:false} onClick={this.Nextpage}>
-
-                                <i class="fas fa-angle-right"></i>Next
+                                Next <i class="fas fa-angle-right"></i>
                                 </Button>
                                 <Button type="button" variant="secondary" disabled={currentPage === totalPage ? true:false} onClick={this.Lastpage}>
-
-                                <i class="fas fa-angle-double-right"></i>Last
+                                Last <i class="fas fa-angle-double-right"></i>
                                 </Button>
                             </InputGroup.Append>
                         </InputGroup>
